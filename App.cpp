@@ -1,5 +1,7 @@
 #include "App.h"
 
+#include <SFML/Network.hpp>
+#include <format>
 #include <iostream>
 
 using namespace std;
@@ -59,18 +61,28 @@ void App::movePlayerTowardsMouse()
 
 void App::draw()
 {
-	m_window.clear();
-	const auto windowSize = m_window.getSize();
-	const auto radius = static_cast<float>(min(windowSize.x, windowSize.y));
-	sf::CircleShape shape(radius, 60U);
-	shape.setFillColor(sf::Color::Green);
-	m_window.draw(shape);
+	m_background.draw(m_window);
 	m_player.draw(m_window);
 	m_window.display();
 }
 
+static const char* const imgURL = "https://live.staticflickr.com/65535/52884078630_008fd806e0_h.jpg";
+static const char* const imgURL2 = "https://live.staticflickr.com/65535/52562967125_ac3d7ea160_k.jpg";
+static const char* const imgURL3 = "https://live.staticflickr.com/65535/50080607633_77ab082d23_h.jpg";
+static const char* const imgURL4 = "https://live.staticflickr.com/65535/52875829685_ddf074cfff_h.jpg";
+// https://live.staticflickr.com/65535/52856866967_6a5053e26d_h.jpg
+// https://live.staticflickr.com/65535/50581737261_28071fbc28_h.jpg
+// https://live.staticflickr.com/65535/52800537723_0cbfc2fb3d_h.jpg
+// https://live.staticflickr.com/65535/52753570963_b638e12edf_h.jpg
+// https://live.staticflickr.com/5790/20945867598_c8487302ca_h.jpg
+// https://live.staticflickr.com/4003/4656802696_a8d1c06997_c.jpg
+// https://live.staticflickr.com/4016/4629801399_7d2843bc64_c.jpg
+
 int App::runMainLoop()
 {
+	//m_downloader.download(imgURL, "test.jpg");
+	m_background.loadImageFromFile("test.jpg", m_window);
+
 	while (true)
 	{
 		processEvents();

@@ -2,7 +2,11 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Background.h"
+#include "Downloader.h"
 #include "Player.h"
+
+class Downloader;
 
 class App
 {
@@ -18,6 +22,8 @@ private:
 
 	sf::RenderWindow m_window;
 	sf::Vector2u m_lastWindowSize;
+	Background m_background;
 	Player m_player;
+	Downloader m_downloader;
 	bool m_leftMouseHeld;
 };

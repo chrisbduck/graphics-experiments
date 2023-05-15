@@ -1,5 +1,7 @@
 #include "App.h"
 
+#include "Utilities.h"
+
 #include <SFML/Network.hpp>
 #include <format>
 #include <iostream>
@@ -14,6 +16,8 @@ App::App() :
 {
 	m_window.setFramerateLimit(30);
 	m_player.setPosition(50.0f, 50.0f);
+	m_marker.setPosition(300.0f, 200.0f);
+	m_marker.setTriggerCallback([this]() { m_background.cycleCachedImage(m_window); });
 }
 
 void App::processEvents()
@@ -46,6 +50,7 @@ void App::update()
 {
 	if (m_leftMouseHeld)
 		movePlayerTowardsMouse();
+	m_marker.update(m_player);
 }
 
 void App::movePlayerTowardsMouse()
@@ -54,7 +59,7 @@ void App::movePlayerTowardsMouse()
 	sf::Vector2i mousePosition = sf::Mouse::getPosition(m_window);
 	sf::Vector2f playerPosition = m_player.getPosition();
 	sf::Vector2f offset = sf::Vector2f(mousePosition) - playerPosition;
-	float offsetMagnitude = sqrt(offset.x * offset.x + offset.y * offset.y);
+	float offsetMagnitude = magnitude(offset);
 	float speedScale = (offsetMagnitude < 0.1f) ? 0.0f : min(c_maxSpeed / offsetMagnitude, 1.0f);
 	sf::Vector2f velocity = offset * speedScale;
 	m_player.setPosition(playerPosition + velocity);
@@ -62,7 +67,9 @@ void App::movePlayerTowardsMouse()
 
 void App::draw()
 {
+	m_window.clear();
 	m_background.draw(m_window);
+	m_marker.draw(m_window);
 	m_player.draw(m_window);
 	m_window.display();
 }

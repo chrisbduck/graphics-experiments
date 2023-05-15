@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
 #include <cstdio>
 
 // A RAII wrapper for when we need a temporary FILE*
@@ -17,3 +18,6 @@ public:
 private:
 	FILE* m_file;
 };
+
+// Miscellaneous functions
+float magnitude(const sf::Vector2f& vector);

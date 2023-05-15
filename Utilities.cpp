@@ -5,6 +5,9 @@
 
 using namespace std;
 
+// -----------------------------------------------------------------------------
+// AutoFile
+
 AutoFile::AutoFile(const char* pFileName, const char* pOpenMode)
 {
 	const auto result = fopen_s(&m_file, pFileName, pOpenMode);
@@ -27,4 +30,12 @@ AutoFile::~AutoFile()
 {
 	if (m_file != nullptr)
 		fclose(m_file);
+}
+
+// -----------------------------------------------------------------------------
+// Miscellaneous functions
+
+float magnitude(const sf::Vector2f& vector)
+{
+	return sqrt(vector.x * vector.x + vector.y * vector.y);
 }

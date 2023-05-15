@@ -4,6 +4,7 @@
 
 #include "Background.h"
 #include "ImageCache.h"
+#include "Marker.h"
 #include "Player.h"
 
 class Downloader;
@@ -25,5 +26,6 @@ private:
 	ImageCache m_imageCache;
 	Background m_background;
 	Player m_player;
+	Marker m_marker;
 	bool m_leftMouseHeld;
 };

@@ -11,6 +11,7 @@ public:
 	void draw(sf::RenderWindow& window);
 	void loadImageFromFile(const std::string& fileName, const sf::Window& window);
 	void loadCachedImage(size_t index, const sf::Window& window);
+	void cycleCachedImage(const sf::Window& window);
 
 private:
 
@@ -21,5 +22,6 @@ private:
 	sf::Sprite m_sprite;
 	ImageCache& m_imageCache;
 	std::vector<std::string> m_imageSourceURLs;
+	size_t m_cacheIndex;
 };
 

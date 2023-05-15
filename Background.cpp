@@ -8,7 +8,8 @@ using namespace std;
 
 Background::Background(ImageCache& imageCache) :
 	m_isLoaded(false),
-	m_imageCache(imageCache)
+	m_imageCache(imageCache),
+	m_cacheIndex(0)
 {
 	loadURLs();
 }
@@ -42,11 +43,8 @@ void Background::loadURLs()
 	{
 		string line;
 		urlFileStream >> line;
-		if (line.length() > 0)
-		{
+		if (line.length() > 0 && !line.starts_with('#'))
 			m_imageSourceURLs.push_back(line);
-			cout << line << " " << hasher(line) << "\n";
-		}
 	}
 }
 
@@ -57,4 +55,11 @@ void Background::loadCachedImage(size_t index, const sf::Window& window)
 	
 	const auto& path = m_imageCache.cacheAndGetPath(m_imageSourceURLs[index]);
 	loadImageFromFile(path.string(), window);
+}
+
+void Background::cycleCachedImage(const sf::Window& window)
+{
+	m_cacheIndex = (m_cacheIndex == 1) ? 0 : 1;
+	cout << "cycled to background " << m_cacheIndex << endl;
+	loadCachedImage(m_cacheIndex, window);
 }

@@ -9,7 +9,7 @@
 using namespace std;
 
 App::App() :
-	m_window(sf::VideoMode(800, 600), "SFML works!"),
+	m_window(sf::VideoMode(800, 600), "Silly experimentation"),
 	m_lastWindowSize(0, 0),
 	m_leftMouseHeld(false),
 	m_pImageCache(make_shared<ImageCache>()),
@@ -22,7 +22,7 @@ App::App() :
 	m_pPlayer->setPosition(50.0f, 50.0f);
 	Player::setInstance(m_pPlayer);
 	m_pMarker->setPosition(300.0f, 200.0f);
-	m_pMarker->setTriggerCallback([this]() { m_pBackground->cycleCachedImage(m_window); });
+	m_pMarker->setTriggerCallback([this]() { m_pBackground->cycleCachedImageAsync(m_window.getSize()); });
 }
 
 void App::processEvents()

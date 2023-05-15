@@ -7,6 +7,7 @@ Marker::Marker() :
 	SpriteEntity("data/diamond.png"),
 	m_isTriggering(false)
 {
+	setOrigin(c_defaultSpriteWidth * 0.5f, c_defaultSpriteHeight * 0.5f);
 }
 
 void Marker::update()

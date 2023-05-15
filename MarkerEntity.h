@@ -6,10 +6,10 @@
 
 class Player;
 
-class Marker : public SpriteEntity
+class MarkerEntity : public SpriteEntity
 {
 public:
-	Marker();
+	MarkerEntity();
 	virtual void update() override;
 
 	void setTriggerCallback(std::function<void()> callback) { m_callback = callback; }

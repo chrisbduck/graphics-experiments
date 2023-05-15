@@ -1,4 +1,4 @@
-#include "Background.h"
+#include "BackgroundEntity.h"
 
 #include <chrono>
 #include <fstream>
@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Background::Background(std::shared_ptr<ImageCache> pImageCache) :
+BackgroundEntity::BackgroundEntity(std::shared_ptr<ImageCache> pImageCache) :
 	SpriteEntity("data/background.jpg"),
 	m_pImageCache(pImageCache),
 	m_cacheIndex(std::numeric_limits<size_t>::max())
@@ -15,7 +15,7 @@ Background::Background(std::shared_ptr<ImageCache> pImageCache) :
 	loadURLs();
 }
 
-void Background::update()
+void BackgroundEntity::update()
 {
 	// Check if we're waiting on a new texture and it's ready
 	if (m_futureTextureAndWindowSize.has_value() && m_futureTextureAndWindowSize->wait_for(chrono::seconds::zero()) == future_status::ready)
@@ -28,7 +28,7 @@ void Background::update()
 	}
 }
 
-unique_ptr<sf::Texture> Background::loadTexture(const std::string& fileName)
+unique_ptr<sf::Texture> BackgroundEntity::loadTexture(const std::string& fileName)
 {
 	auto pNewTexture = make_unique<sf::Texture>();
 	if (!pNewTexture->loadFromFile(fileName))
@@ -36,7 +36,7 @@ unique_ptr<sf::Texture> Background::loadTexture(const std::string& fileName)
 	return move(pNewTexture);
 }
 
-void Background::takeAndApplyTexture(unique_ptr<sf::Texture>&& pTexture, const sf::Vector2u& windowSize)
+void BackgroundEntity::takeAndApplyTexture(unique_ptr<sf::Texture>&& pTexture, const sf::Vector2u& windowSize)
 {
 	takeTexture(move(pTexture));
 	const sf::Vector2u textureSize = m_pTexture->getSize();
@@ -45,12 +45,12 @@ void Background::takeAndApplyTexture(unique_ptr<sf::Texture>&& pTexture, const s
 	m_sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(textureSize.x), static_cast<int>(textureSize.y)));
 }
 
-void Background::loadImageFromFile(const std::string& fileName, const sf::Vector2u& windowSize)
+void BackgroundEntity::loadImageFromFile(const std::string& fileName, const sf::Vector2u& windowSize)
 {
 	takeAndApplyTexture(loadTexture(fileName), windowSize);
 }
 
-void Background::loadImageFromFileAsync(const std::string& fileName, const sf::Vector2u& windowSize)
+void BackgroundEntity::loadImageFromFileAsync(const std::string& fileName, const sf::Vector2u& windowSize)
 {
 	// not trying to chain futures for now
 	if (m_futureTextureAndWindowSize.has_value())
@@ -61,7 +61,7 @@ void Background::loadImageFromFileAsync(const std::string& fileName, const sf::V
 		[this, fileName, windowSizeCopy]() { return make_tuple(loadTexture(fileName), windowSizeCopy); });
 }
 
-void Background::loadURLs()
+void BackgroundEntity::loadURLs()
 {
 	ifstream urlFileStream("urls.txt");
 	if (!urlFileStream.good())
@@ -76,20 +76,20 @@ void Background::loadURLs()
 	}
 }
 
-const filesystem::path& Background::cacheAndGetPath(size_t index)
+const filesystem::path& BackgroundEntity::cacheAndGetPath(size_t index)
 {
 	if (index >= m_imageSourceURLs.size())
 		throw runtime_error("Index out of range: " + to_string(index));
 	return m_pImageCache->cacheAndGetPath(m_imageSourceURLs[index]);
 }
 
-void Background::loadCachedImage(size_t index, const sf::Vector2u& windowSize)
+void BackgroundEntity::loadCachedImage(size_t index, const sf::Vector2u& windowSize)
 {
 	const auto& path = cacheAndGetPath(index);
 	loadImageFromFile(path.string(), windowSize);
 }
 
-void Background::loadCachedImageAsync(size_t index, const sf::Vector2u& windowSize)
+void BackgroundEntity::loadCachedImageAsync(size_t index, const sf::Vector2u& windowSize)
 {
 	// not trying to chain futures for now
 	if (m_futureTextureAndWindowSize.has_value())
@@ -103,19 +103,19 @@ void Background::loadCachedImageAsync(size_t index, const sf::Vector2u& windowSi
 	});
 }
 
-void Background::cycleCachedImageIndex()
+void BackgroundEntity::cycleCachedImageIndex()
 {
 	m_cacheIndex = (m_cacheIndex >= 2) ? 0 : (m_cacheIndex + 1);
 	cout << "cycled to background " << m_cacheIndex << endl;
 }
 
-void Background::cycleCachedImage(const sf::Vector2u& windowSize)
+void BackgroundEntity::cycleCachedImage(const sf::Vector2u& windowSize)
 {
 	cycleCachedImageIndex();
 	loadCachedImage(m_cacheIndex, windowSize);
 }
 
-void Background::cycleCachedImageAsync(const sf::Vector2u& windowSize)
+void BackgroundEntity::cycleCachedImageAsync(const sf::Vector2u& windowSize)
 {
 	cycleCachedImageIndex();
 	loadCachedImageAsync(m_cacheIndex, windowSize);

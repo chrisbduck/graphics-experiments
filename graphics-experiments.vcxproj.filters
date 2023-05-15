@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,7 +17,7 @@
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="PlayerEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Downloader.cpp">
@@ -30,13 +26,13 @@
     <ClCompile Include="Utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Background.cpp">
+    <ClCompile Include="BackgroundEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Marker.cpp">
+    <ClCompile Include="MarkerEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpriteEntity.cpp">
@@ -47,7 +43,7 @@
     <ClInclude Include="App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="PlayerEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Downloader.h">
@@ -56,13 +52,13 @@
     <ClInclude Include="Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Background.h">
+    <ClInclude Include="BackgroundEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageCache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Marker.h">
+    <ClInclude Include="MarkerEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpriteEntity.h">

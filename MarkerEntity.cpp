@@ -1,18 +1,18 @@
-#include "Marker.h"
+#include "MarkerEntity.h"
 
-#include "Player.h"
+#include "PlayerEntity.h"
 #include "Utilities.h"
 
-Marker::Marker() :
+MarkerEntity::MarkerEntity() :
 	SpriteEntity("data/diamond.png"),
 	m_isTriggering(false)
 {
 	setOrigin(c_defaultSpriteWidth * 0.5f, c_defaultSpriteHeight * 0.5f);
 }
 
-void Marker::update()
+void MarkerEntity::update()
 {
-	const auto player = Player::get();
+	const auto player = PlayerEntity::get();
 	const sf::Vector2f offset = player->getPosition() - getPosition();
 	bool shouldTrigger = magnitude(offset) < SpriteEntity::c_defaultSpriteWidth;
 	if (shouldTrigger != m_isTriggering)

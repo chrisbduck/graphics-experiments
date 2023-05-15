@@ -6,10 +6,10 @@
 #include <SFML/Graphics.hpp>
 #include <future>
 
-class Background : public SpriteEntity
+class BackgroundEntity : public SpriteEntity
 {
 public:
-	explicit Background(std::shared_ptr<ImageCache> imageCache);
+	explicit BackgroundEntity(std::shared_ptr<ImageCache> imageCache);
 
 	virtual void update() override;
 

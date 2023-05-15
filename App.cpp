@@ -1,5 +1,8 @@
 #include "App.h"
 
+#include "BackgroundEntity.h"
+#include "MarkerEntity.h"
+#include "PlayerEntity.h"
 #include "Utilities.h"
 
 #include <SFML/Network.hpp>
@@ -13,14 +16,14 @@ App::App() :
 	m_lastWindowSize(0, 0),
 	m_leftMouseHeld(false),
 	m_pImageCache(make_shared<ImageCache>()),
-	m_pBackground(make_shared<Background>(m_pImageCache)),
-	m_pPlayer(make_shared<Player>()),
-	m_pMarker(make_shared<Marker>()),
+	m_pBackground(make_shared<BackgroundEntity>(m_pImageCache)),
+	m_pPlayer(make_shared<PlayerEntity>()),
+	m_pMarker(make_shared<MarkerEntity>()),
 	m_entities{ m_pBackground, m_pPlayer, m_pMarker }
 {
 	m_window.setFramerateLimit(30);
 	m_pPlayer->setPosition(50.0f, 50.0f);
-	Player::setInstance(m_pPlayer);
+	PlayerEntity::setInstance(m_pPlayer);
 	m_pMarker->setPosition(300.0f, 200.0f);
 	m_pMarker->setTriggerCallback([this]() { m_pBackground->cycleCachedImageAsync(m_window.getSize()); });
 }

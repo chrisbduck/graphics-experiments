@@ -146,22 +146,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="Background.cpp" />
+    <ClCompile Include="BackgroundEntity.cpp" />
     <ClCompile Include="Downloader.cpp" />
     <ClCompile Include="ImageCache.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Marker.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="MarkerEntity.cpp" />
+    <ClCompile Include="PlayerEntity.cpp" />
     <ClCompile Include="SpriteEntity.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
-    <ClInclude Include="Background.h" />
+    <ClInclude Include="BackgroundEntity.h" />
     <ClInclude Include="Downloader.h" />
     <ClInclude Include="ImageCache.h" />
-    <ClInclude Include="Marker.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="MarkerEntity.h" />
+    <ClInclude Include="PlayerEntity.h" />
     <ClInclude Include="SpriteEntity.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>

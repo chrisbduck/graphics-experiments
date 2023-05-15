@@ -6,30 +6,27 @@
 
 using namespace std;
 
-Background::Background(ImageCache& imageCache) :
-	m_isLoaded(false),
-	m_imageCache(imageCache),
-	m_cacheIndex(0)
+Background::Background(std::shared_ptr<ImageCache> pImageCache) :
+	SpriteEntity("data/background.jpg"),
+	m_pImageCache(pImageCache),
+	m_cacheIndex(std::numeric_limits<size_t>::max())
 {
 	loadURLs();
 }
 
-void Background::draw(sf::RenderWindow& window)
-{
-	if (m_isLoaded)
-		window.draw(m_sprite);
-}
-
 void Background::loadImageFromFile(const std::string& fileName, const sf::Window& window)
 {
-	if (!m_texture.loadFromFile(fileName))
-		throw runtime_error("Failed to load file " + fileName);
-	m_sprite.setTexture(m_texture);
+	{
+		auto pNewTexture = make_unique<sf::Texture>();
+		if (!pNewTexture->loadFromFile(fileName))
+			throw runtime_error("Failed to load file " + fileName);
+		takeTexture(move(pNewTexture));
+	}
 	const sf::Vector2u windowSize = window.getSize();
-	const sf::Vector2u textureSize = m_texture.getSize();
-	m_sprite.setScale(float(windowSize.x) / textureSize.x, float(windowSize.y) / textureSize.y);
-	m_sprite.setPosition(0.0f, 0.0f);
-	m_isLoaded = true;
+	const sf::Vector2u textureSize = m_pTexture->getSize();
+	const sf::Vector2f scale(float(windowSize.x) / textureSize.x, float(windowSize.y) / textureSize.y);
+	m_sprite.setScale(scale);
+	m_sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(textureSize.x), static_cast<int>(textureSize.y)));
 }
 
 void Background::loadURLs()
@@ -38,7 +35,6 @@ void Background::loadURLs()
 	if (!urlFileStream.good())
 		throw runtime_error("Couldn't open URLs file");
 
-	hash<string> hasher;
 	while (urlFileStream.good())
 	{
 		string line;
@@ -53,13 +49,13 @@ void Background::loadCachedImage(size_t index, const sf::Window& window)
 	if (index >= m_imageSourceURLs.size())
 		throw runtime_error("Index out of range: " + to_string(index));
 	
-	const auto& path = m_imageCache.cacheAndGetPath(m_imageSourceURLs[index]);
+	const auto& path = m_pImageCache->cacheAndGetPath(m_imageSourceURLs[index]);
 	loadImageFromFile(path.string(), window);
 }
 
 void Background::cycleCachedImage(const sf::Window& window)
 {
-	m_cacheIndex = (m_cacheIndex == 1) ? 0 : 1;
+	m_cacheIndex = (m_cacheIndex == 0) ? 1 : 0;
 	cout << "cycled to background " << m_cacheIndex << endl;
 	loadCachedImage(m_cacheIndex, window);
 }

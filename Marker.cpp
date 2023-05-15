@@ -9,9 +9,10 @@ Marker::Marker() :
 {
 }
 
-void Marker::update(const Player& player)
+void Marker::update()
 {
-	const sf::Vector2f offset = player.getPosition() - getPosition();
+	const auto player = Player::get();
+	const sf::Vector2f offset = player->getPosition() - getPosition();
 	bool shouldTrigger = magnitude(offset) < SpriteEntity::c_defaultSpriteWidth;
 	if (shouldTrigger != m_isTriggering)
 	{

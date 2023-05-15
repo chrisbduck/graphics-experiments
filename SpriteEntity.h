@@ -9,8 +9,9 @@ public:
 	static const int c_defaultSpriteWidth = 32;
 	static const int c_defaultSpriteHeight = 32;
 
-	SpriteEntity(const std::string& fileName, int width = c_defaultSpriteWidth, int height = c_defaultSpriteHeight);
+	SpriteEntity(const std::string& fileName);
 	virtual ~SpriteEntity();
+	virtual void update();
 	virtual void draw(sf::RenderWindow& window);
 
 	void setPosition(float x, float y) { m_pos = sf::Vector2f(x, y); }
@@ -18,9 +19,13 @@ public:
 	const sf::Vector2f& getPosition() const { return m_pos; }
 
 	void setOrigin(float x, float y) { m_sprite.setOrigin(x, y); }
+	void setTextureSize(int width, int height);
 
-private:
+	void takeTexture(std::unique_ptr<sf::Texture>&& pTexture);
+
+protected:
+	// normally we'd make these private and add accessors, but I'm skipping for this experiment
 	sf::Vector2f m_pos;
-	sf::Texture m_texture;
+	std::unique_ptr<sf::Texture> m_pTexture;
 	sf::Sprite m_sprite;
 };

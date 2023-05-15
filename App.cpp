@@ -12,12 +12,17 @@ App::App() :
 	m_window(sf::VideoMode(800, 600), "SFML works!"),
 	m_lastWindowSize(0, 0),
 	m_leftMouseHeld(false),
-	m_background(m_imageCache)
+	m_pImageCache(make_shared<ImageCache>()),
+	m_pBackground(make_shared<Background>(m_pImageCache)),
+	m_pPlayer(make_shared<Player>()),
+	m_pMarker(make_shared<Marker>()),
+	m_entities{ m_pBackground, m_pPlayer, m_pMarker }
 {
 	m_window.setFramerateLimit(30);
-	m_player.setPosition(50.0f, 50.0f);
-	m_marker.setPosition(300.0f, 200.0f);
-	m_marker.setTriggerCallback([this]() { m_background.cycleCachedImage(m_window); });
+	m_pPlayer->setPosition(50.0f, 50.0f);
+	Player::setInstance(m_pPlayer);
+	m_pMarker->setPosition(300.0f, 200.0f);
+	m_pMarker->setTriggerCallback([this]() { m_pBackground->cycleCachedImage(m_window); });
 }
 
 void App::processEvents()
@@ -50,34 +55,30 @@ void App::update()
 {
 	if (m_leftMouseHeld)
 		movePlayerTowardsMouse();
-	m_marker.update(m_player);
+	ranges::for_each(m_entities, &SpriteEntity::update);
 }
 
 void App::movePlayerTowardsMouse()
 {
 	static const float c_maxSpeed = 5.0f;
 	sf::Vector2i mousePosition = sf::Mouse::getPosition(m_window);
-	sf::Vector2f playerPosition = m_player.getPosition();
+	sf::Vector2f playerPosition = m_pPlayer->getPosition();
 	sf::Vector2f offset = sf::Vector2f(mousePosition) - playerPosition;
 	float offsetMagnitude = magnitude(offset);
 	float speedScale = (offsetMagnitude < 0.1f) ? 0.0f : min(c_maxSpeed / offsetMagnitude, 1.0f);
 	sf::Vector2f velocity = offset * speedScale;
-	m_player.setPosition(playerPosition + velocity);
+	m_pPlayer->setPosition(playerPosition + velocity);
 }
 
 void App::draw()
 {
 	m_window.clear();
-	m_background.draw(m_window);
-	m_marker.draw(m_window);
-	m_player.draw(m_window);
+	ranges::for_each(m_entities, [this](shared_ptr<SpriteEntity>& entity) { entity->draw(m_window); });
 	m_window.display();
 }
 
 int App::runMainLoop()
 {
-	m_background.loadCachedImage(0, m_window);
-
 	while (true)
 	{
 		processEvents();

@@ -1,16 +1,22 @@
 #include "Background.h"
 
+#include <fstream>
 #include <stdexcept>
+#include <iostream>
 
 using namespace std;
 
-Background::Background()
+Background::Background(ImageCache& imageCache) :
+	m_isLoaded(false),
+	m_imageCache(imageCache)
 {
+	loadURLs();
 }
 
 void Background::draw(sf::RenderWindow& window)
 {
-	window.draw(m_sprite);
+	if (m_isLoaded)
+		window.draw(m_sprite);
 }
 
 void Background::loadImageFromFile(const std::string& fileName, const sf::Window& window)
@@ -22,4 +28,33 @@ void Background::loadImageFromFile(const std::string& fileName, const sf::Window
 	const sf::Vector2u textureSize = m_texture.getSize();
 	m_sprite.setScale(float(windowSize.x) / textureSize.x, float(windowSize.y) / textureSize.y);
 	m_sprite.setPosition(0.0f, 0.0f);
+	m_isLoaded = true;
+}
+
+void Background::loadURLs()
+{
+	ifstream urlFileStream("urls.txt");
+	if (!urlFileStream.good())
+		throw runtime_error("Couldn't open URLs file");
+
+	hash<string> hasher;
+	while (urlFileStream.good())
+	{
+		string line;
+		urlFileStream >> line;
+		if (line.length() > 0)
+		{
+			m_imageSourceURLs.push_back(line);
+			cout << line << " " << hasher(line) << "\n";
+		}
+	}
+}
+
+void Background::loadCachedImage(size_t index, const sf::Window& window)
+{
+	if (index >= m_imageSourceURLs.size())
+		throw runtime_error("Index out of range: " + to_string(index));
+	
+	const auto& path = m_imageCache.cacheAndGetPath(m_imageSourceURLs[index]);
+	loadImageFromFile(path.string(), window);
 }

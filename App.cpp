@@ -9,7 +9,8 @@ using namespace std;
 App::App() :
 	m_window(sf::VideoMode(800, 600), "SFML works!"),
 	m_lastWindowSize(0, 0),
-	m_leftMouseHeld(false)
+	m_leftMouseHeld(false),
+	m_background(m_imageCache)
 {
 	m_window.setFramerateLimit(30);
 	m_player.setPosition(50.0f, 50.0f);
@@ -66,22 +67,9 @@ void App::draw()
 	m_window.display();
 }
 
-static const char* const imgURL = "https://live.staticflickr.com/65535/52884078630_008fd806e0_h.jpg";
-static const char* const imgURL2 = "https://live.staticflickr.com/65535/52562967125_ac3d7ea160_k.jpg";
-static const char* const imgURL3 = "https://live.staticflickr.com/65535/50080607633_77ab082d23_h.jpg";
-static const char* const imgURL4 = "https://live.staticflickr.com/65535/52875829685_ddf074cfff_h.jpg";
-// https://live.staticflickr.com/65535/52856866967_6a5053e26d_h.jpg
-// https://live.staticflickr.com/65535/50581737261_28071fbc28_h.jpg
-// https://live.staticflickr.com/65535/52800537723_0cbfc2fb3d_h.jpg
-// https://live.staticflickr.com/65535/52753570963_b638e12edf_h.jpg
-// https://live.staticflickr.com/5790/20945867598_c8487302ca_h.jpg
-// https://live.staticflickr.com/4003/4656802696_a8d1c06997_c.jpg
-// https://live.staticflickr.com/4016/4629801399_7d2843bc64_c.jpg
-
 int App::runMainLoop()
 {
-	//m_downloader.download(imgURL, "test.jpg");
-	m_background.loadImageFromFile("test.jpg", m_window);
+	m_background.loadCachedImage(0, m_window);
 
 	while (true)
 	{

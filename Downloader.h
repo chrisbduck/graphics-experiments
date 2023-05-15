@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+#include <future>
 #include <string>
 
 typedef void CURL;
@@ -10,8 +12,9 @@ public:
 	Downloader();
 	~Downloader();
 
-	void download(const std::string& url, const std::string& outputFileName);
+	void download(const std::string& url, const std::filesystem::path& outputFileName);
+
 private:
-	CURL* m_curl;
+	static bool s_initialized;
 };
 

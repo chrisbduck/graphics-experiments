@@ -2,14 +2,20 @@
 
 #include "BackgroundEntity.h"
 #include "MarkerEntity.h"
+#include "PlasmaEntity.h"
 #include "PlayerEntity.h"
 #include "Utilities.h"
 
-#include <SFML/Network.hpp>
+#include <cstdlib>
 #include <format>
 #include <iostream>
 
 using namespace std;
+
+namespace
+{
+	const double c_fpsUpdateIntervalSec = 3.0;
+}
 
 App::App() :
 	m_window(sf::VideoMode(800, 600), "Silly experimentation"),
@@ -19,13 +25,20 @@ App::App() :
 	m_pBackground(make_shared<BackgroundEntity>(m_pImageCache)),
 	m_pPlayer(make_shared<PlayerEntity>()),
 	m_pMarker(make_shared<MarkerEntity>()),
-	m_entities{ m_pBackground, m_pPlayer, m_pMarker }
+	m_entities{ m_pBackground, m_pPlayer, m_pMarker },
+	m_fpsTimerStart(chrono::high_resolution_clock::now()),
+	m_fpsDisplay(0.0f),
+	m_fpsFrameCount(0)
 {
 	m_window.setFramerateLimit(30);
 	m_pPlayer->setPosition(50.0f, 50.0f);
 	PlayerEntity::setInstance(m_pPlayer);
 	m_pMarker->setPosition(300.0f, 200.0f);
 	m_pMarker->setTriggerCallback([this]() { m_pBackground->cycleCachedImageAsync(m_window.getSize()); });
+
+	srand(static_cast<unsigned>(time(nullptr)));
+
+	initFPSDisplay();
 }
 
 void App::processEvents()
@@ -58,7 +71,44 @@ void App::update()
 {
 	if (m_leftMouseHeld)
 		movePlayerTowardsMouse();
+
 	ranges::for_each(m_entities, &SpriteEntity::update);
+
+	updateFPSTimer();
+}
+
+void App::initFPSDisplay()
+{
+	if (!m_font.loadFromFile("c:\\windows\\fonts\\Georgia.ttf"))
+		throw runtime_error("Failed to load font");
+	m_fpsText.setFont(m_font);
+	m_fpsText.setCharacterSize(32);
+	m_fpsText.setFillColor(sf::Color::Yellow);
+}
+
+void App::updateFPSTimer()
+{
+	++m_fpsFrameCount;
+
+	// Check if it's been long enough to update the FPS counter
+	auto now = chrono::high_resolution_clock::now();
+	auto elapsedMS = float(chrono::duration_cast<chrono::milliseconds>(now - m_fpsTimerStart).count());
+	if (elapsedMS < c_fpsUpdateIntervalSec)
+		return;
+
+	// Update the counter
+	m_fpsDisplay = m_fpsFrameCount * 1000.0f / elapsedMS;
+
+	// Set up the next timer
+	m_fpsFrameCount = 0;
+	m_fpsTimerStart = now;
+}
+
+void App::drawFPSTimer()
+{
+	m_fpsText.setString(format("FPS: {:.1f}", m_fpsDisplay));
+	m_fpsText.setPosition(16.0f, m_window.getSize().y - 48.0f);
+	m_window.draw(m_fpsText);
 }
 
 void App::movePlayerTowardsMouse()
@@ -77,6 +127,7 @@ void App::draw()
 {
 	m_window.clear();
 	ranges::for_each(m_entities, [this](shared_ptr<SpriteEntity>& entity) { entity->draw(m_window); });
+	drawFPSTimer();
 	m_window.display();
 }
 

@@ -2,12 +2,25 @@
 
 using namespace std;
 
-SpriteEntity::SpriteEntity(const std::string& fileName) :
+SpriteEntity::SpriteEntity() :
 	m_pos(0.0f, 0.0f),
 	m_pTexture(make_unique<sf::Texture>())
 {
+}
+
+SpriteEntity::SpriteEntity(const std::string& fileName) :
+	SpriteEntity()
+{
 	if (!m_pTexture->loadFromFile(fileName))
 		throw std::runtime_error("Failed to load texture: " + fileName);
+	m_sprite.setTexture(*m_pTexture);
+}
+
+SpriteEntity::SpriteEntity(int width, int height) :
+	SpriteEntity()
+{
+	if (!m_pTexture->create(width, height))
+		throw runtime_error("Error creating texture");
 	m_sprite.setTexture(*m_pTexture);
 }
 

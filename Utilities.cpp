@@ -33,9 +33,37 @@ AutoFile::~AutoFile()
 }
 
 // -----------------------------------------------------------------------------
+// TimeLogger
+
+TimeLogger::TimeLogger(const string& label) :
+	m_startTime(chrono::high_resolution_clock::now()),
+	m_label(label)
+{
+}
+
+TimeLogger::~TimeLogger()
+{
+	auto endTime = chrono::high_resolution_clock::now();
+	long long durationMS = chrono::duration_cast<chrono::milliseconds>(endTime - m_startTime).count();
+	cout << m_label << " ms: " << durationMS << "\n";
+}
+
+// -----------------------------------------------------------------------------
 // Miscellaneous functions
 
 float magnitude(const sf::Vector2f& vector)
 {
 	return sqrt(vector.x * vector.x + vector.y * vector.y);
+}
+
+float randomFloat()
+{
+	return static_cast<float>(rand()) / (RAND_MAX + 1);
+}
+
+float timeSinceEpochInSeconds()
+{
+	auto now = chrono::high_resolution_clock::now();
+	long long timeSinceEpochUS = chrono::duration_cast<chrono::microseconds>(now.time_since_epoch()).count();
+	return float(timeSinceEpochUS) * 0.000001f;
 }

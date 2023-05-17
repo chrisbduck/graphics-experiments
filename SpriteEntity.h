@@ -9,7 +9,8 @@ public:
 	static const int c_defaultSpriteWidth = 32;
 	static const int c_defaultSpriteHeight = 32;
 
-	SpriteEntity(const std::string& fileName);
+	SpriteEntity(const std::string& fileName);	// construct with texture from file
+	SpriteEntity(int width, int height);		// construct with empty texture
 	virtual ~SpriteEntity();
 	virtual void update();
 	virtual void draw(sf::RenderWindow& window);
@@ -28,4 +29,7 @@ protected:
 	sf::Vector2f m_pos;
 	std::unique_ptr<sf::Texture> m_pTexture;
 	sf::Sprite m_sprite;
+
+private:
+	SpriteEntity();		// internal partial constructor
 };

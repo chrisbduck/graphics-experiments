@@ -14,7 +14,7 @@ using namespace std;
 
 namespace
 {
-	const double c_fpsUpdateIntervalSec = 3.0;
+	const double c_fpsUpdateIntervalMsec = 2000.0;
 }
 
 App::App() :
@@ -24,8 +24,10 @@ App::App() :
 	m_pImageCache(make_shared<ImageCache>()),
 	m_pBackground(make_shared<BackgroundEntity>(m_pImageCache)),
 	m_pPlayer(make_shared<PlayerEntity>()),
-	m_pMarker(make_shared<MarkerEntity>()),
-	m_entities{ m_pBackground, m_pPlayer, m_pMarker },
+	m_pBackgroundActivationMarker(make_shared<MarkerEntity>()),
+	m_pPlasmaActivationMarker(make_shared<MarkerEntity>()),
+	m_pPlasma(make_shared<PlasmaEntity>(800, 600)),
+	m_entities{ m_pBackground, m_pPlasma, m_pPlayer, m_pBackgroundActivationMarker, m_pPlasmaActivationMarker },
 	m_fpsTimerStart(chrono::high_resolution_clock::now()),
 	m_fpsDisplay(0.0f),
 	m_fpsFrameCount(0)
@@ -33,8 +35,14 @@ App::App() :
 	m_window.setFramerateLimit(30);
 	m_pPlayer->setPosition(50.0f, 50.0f);
 	PlayerEntity::setInstance(m_pPlayer);
-	m_pMarker->setPosition(300.0f, 200.0f);
-	m_pMarker->setTriggerCallback([this]() { m_pBackground->cycleCachedImageAsync(m_window.getSize()); });
+	m_pBackgroundActivationMarker->setPosition(300.0f, 200.0f);
+	m_pBackgroundActivationMarker->setTriggerCallback([this]()
+		{
+			m_pPlasma->setActive(false);
+			m_pBackground->cycleCachedImageAsync(m_window.getSize());
+		});
+	m_pPlasmaActivationMarker->setPosition(180.0f, 320.0f);
+	m_pPlasmaActivationMarker->setTriggerCallback([this]() { m_pPlasma->setActive(!m_pPlasma->isActive()); });
 
 	srand(static_cast<unsigned>(time(nullptr)));
 
@@ -93,7 +101,7 @@ void App::updateFPSTimer()
 	// Check if it's been long enough to update the FPS counter
 	auto now = chrono::high_resolution_clock::now();
 	auto elapsedMS = float(chrono::duration_cast<chrono::milliseconds>(now - m_fpsTimerStart).count());
-	if (elapsedMS < c_fpsUpdateIntervalSec)
+	if (elapsedMS < c_fpsUpdateIntervalMsec)
 		return;
 
 	// Update the counter

@@ -7,6 +7,7 @@
 
 class BackgroundEntity;
 class MarkerEntity;
+class PlasmaEntity;
 class PlayerEntity;
 class SpriteEntity;
 
@@ -33,7 +34,9 @@ private:
 	std::shared_ptr<ImageCache> m_pImageCache;
 	std::shared_ptr<BackgroundEntity> m_pBackground;
 	std::shared_ptr<PlayerEntity> m_pPlayer;
-	std::shared_ptr<MarkerEntity> m_pMarker;
+	std::shared_ptr<MarkerEntity> m_pBackgroundActivationMarker;
+	std::shared_ptr<MarkerEntity> m_pPlasmaActivationMarker;
+	std::shared_ptr<PlasmaEntity> m_pPlasma;
 	std::vector<std::shared_ptr<SpriteEntity>> m_entities;
 	std::chrono::high_resolution_clock::time_point m_fpsTimerStart;
 	float m_fpsDisplay;

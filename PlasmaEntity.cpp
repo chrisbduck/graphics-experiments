@@ -23,7 +23,8 @@ namespace
 PlasmaEntity::PlasmaEntity(int width, int height) :
 	SpriteEntity(width, height),
 	m_sinLookup(c_lookupSize),
-	m_cosLookup(c_lookupSize)
+	m_cosLookup(c_lookupSize),
+	m_isActive(false)
 {
 	setTextureData();
 	constexpr float scale = twoPi / c_lookupSize;
@@ -52,7 +53,8 @@ float PlasmaEntity::fastCos(float value) const
 
 void PlasmaEntity::update()
 {
-	setTextureData();
+	if (m_isActive)
+		setTextureData();
 }
 
 void PlasmaEntity::setTextureData()
@@ -67,7 +69,9 @@ void PlasmaEntity::setTextureData()
 	float invHeight = 1.0f / height;
 	const float timeSec = timeSinceEpochInSeconds();
 	const float timeTimesTwoPi = timeSec * twoPi;
-	const float quarterTime = timeSec * 0.25f;
+	const float timeR = timeSec * (1.0f / 3.0f);
+	const float timeG = timeSec * (1.0f / 5.0f);
+	const float timeB = timeSec * (1.0f / 7.0f);
 	unsigned index = 0;
 	for (unsigned y = 0; y < height; ++y)
 	{
@@ -75,22 +79,27 @@ void PlasmaEntity::setTextureData()
 		for (unsigned x = 0; x < width; ++x)
 		{
 			float xRatio = x * invWidth;
-			float val = (fastSin((xRatio + quarterTime) * 10.0f + fastCos(yRatio * 20.0f))
-				+ fastSin(yRatio * 5.0f + fastSin(xRatio * 30.0f))
+			float valBase = fastSin(yRatio * 5.0f + fastSin(xRatio * 30.0f))
 				+ fastSin((xRatio + yRatio) * 25.0f)
-				+ fastSin(sqrtf(xRatio * xRatio + yRatio * yRatio)))
-				* 0.25f + 0.5f;
-			float valR = 0.5f * (val + fastSin(timeTimesTwoPi * (1.0f / 4.0f)));
-			float valG = 0.5f * (val + fastSin(timeTimesTwoPi * (1.0f / 7.0f)));
-			float valB = 0.5f * (val + fastSin(timeTimesTwoPi * (1.0f / 9.0f)));
+				+ fastSin(xRatio * xRatio + yRatio * yRatio);	// originally sqrtf, but it's slow and doesn't affect things much
+			float yCosVal = fastCos(yRatio * 20.0f);
+			float valR = (fastSin((xRatio + timeR) * 10.0f + yCosVal) + valBase) * 0.25f + 0.4f;
+			float valG = (fastSin((xRatio + timeG) * 10.0f + yCosVal) + valBase) * 0.25f + 0.4f;
+			float valB = (fastSin((xRatio + timeB) * 10.0f + yCosVal) + valBase) * 0.25f + 0.4f;
 			unsigned uValR = static_cast<unsigned>(clamp(valR, 0.0f, 1.0f) * 255.0f);
 			unsigned uValG = static_cast<unsigned>(clamp(valG, 0.0f, 1.0f) * 255.0f);
 			unsigned uValB = static_cast<unsigned>(clamp(valB, 0.0f, 1.0f) * 255.0f);
-			auto color = 0xFF000000 | uValB << 16 | uValG << 8 | uValR;
+			auto color = 0xFF000000U | uValB << 16 | uValG << 8 | uValR;
 			pixels[index] = color;
 			++index;
 		}
 	}
 
 	m_pTexture->update(reinterpret_cast<sf::Uint8*>(pixels.data()));
+}
+
+void PlasmaEntity::draw(sf::RenderWindow& window)
+{
+	if (m_isActive)
+		SpriteEntity::draw(window);
 }

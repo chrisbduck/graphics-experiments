@@ -14,7 +14,7 @@ using namespace std;
 
 namespace
 {
-	const double c_fpsUpdateIntervalMsec = 2000.0;
+	const auto c_fpsUpdateInterval = chrono::seconds(2);
 }
 
 App::App() :
@@ -100,9 +100,10 @@ void App::updateFPSTimer()
 
 	// Check if it's been long enough to update the FPS counter
 	auto now = chrono::high_resolution_clock::now();
-	auto elapsedMS = float(chrono::duration_cast<chrono::milliseconds>(now - m_fpsTimerStart).count());
-	if (elapsedMS < c_fpsUpdateIntervalMsec)
+	auto timeSinceUpdate = now - m_fpsTimerStart;
+	if (timeSinceUpdate < c_fpsUpdateInterval)
 		return;
+	auto elapsedMS = float(chrono::duration_cast<chrono::milliseconds>(timeSinceUpdate).count());
 
 	// Update the counter
 	m_fpsDisplay = m_fpsFrameCount * 1000.0f / elapsedMS;

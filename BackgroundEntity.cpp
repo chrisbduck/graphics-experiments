@@ -105,7 +105,7 @@ void BackgroundEntity::loadCachedImageAsync(size_t index, const sf::Vector2u& wi
 
 void BackgroundEntity::cycleCachedImageIndex()
 {
-	m_cacheIndex = (m_cacheIndex >= 2) ? 0 : (m_cacheIndex + 1);
+	m_cacheIndex = (m_cacheIndex >= m_imageSourceURLs.size()) ? 0 : (m_cacheIndex + 1);
 	cout << "cycled to background " << m_cacheIndex << endl;
 }
 

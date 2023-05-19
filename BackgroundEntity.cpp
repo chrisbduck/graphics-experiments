@@ -20,10 +20,16 @@ void BackgroundEntity::update()
 	// Check if we're waiting on a new texture and it's ready
 	if (m_futureTextureAndWindowSize.has_value() && m_futureTextureAndWindowSize->wait_for(chrono::seconds::zero()) == future_status::ready)
 	{
-		auto value = m_futureTextureAndWindowSize->get();
-		auto&& pTexture = get<0>(value);
-		const auto& windowSize = get<1>(value);
-		takeAndApplyTexture(move(pTexture), windowSize);
+		try {
+			auto value = m_futureTextureAndWindowSize->get();
+			auto&& pTexture = get<0>(value);
+			const auto& windowSize = get<1>(value);
+			takeAndApplyTexture(move(pTexture), windowSize);
+		}
+		catch (const exception& exc)
+		{
+			cerr << exc.what() << endl;
+		}
 		m_futureTextureAndWindowSize.reset();
 	}
 }
@@ -105,7 +111,7 @@ void BackgroundEntity::loadCachedImageAsync(size_t index, const sf::Vector2u& wi
 
 void BackgroundEntity::cycleCachedImageIndex()
 {
-	m_cacheIndex = (m_cacheIndex >= m_imageSourceURLs.size()) ? 0 : (m_cacheIndex + 1);
+	m_cacheIndex = (m_cacheIndex >= m_imageSourceURLs.size() - 1) ? 0 : (m_cacheIndex + 1);
 	cout << "cycled to background " << m_cacheIndex << endl;
 }
 

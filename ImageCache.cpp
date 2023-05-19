@@ -1,6 +1,7 @@
 #include "ImageCache.h"
 
 #include <filesystem>
+#include <iostream>
 
 using namespace std;
 
@@ -31,10 +32,12 @@ const std::filesystem::path& ImageCache::cacheAndGetPath(const std::string& url)
 	if (!exists(localFileName))
 	{
 		// Download
+		cout << "downloading " << localFileName.filename() << " from " << url << endl;
 		m_downloader.download(url, localFileName);
 	}
 
 	// Cache and return
 	const auto& iInsertedPath = m_urlToLocalPath.insert({ url, localFileName }).first;
+	cout << "loading local file " << localFileName.filename() << endl;
 	return iInsertedPath->second;
 }
